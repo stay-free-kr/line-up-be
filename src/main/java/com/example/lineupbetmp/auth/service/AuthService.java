@@ -3,6 +3,8 @@ package com.example.lineupbetmp.auth.service;
 import com.example.lineupbetmp.auth.dto.LoginRequest;
 import com.example.lineupbetmp.auth.dto.LoginResponse;
 import com.example.lineupbetmp.auth.dto.SignupRequest;
+import com.example.lineupbetmp.common.exception.BusinessException;
+import com.example.lineupbetmp.common.exception.ErrorCode;
 import com.example.lineupbetmp.config.JwtUtil;
 import com.example.lineupbetmp.entity.User;
 import com.example.lineupbetmp.repository.UserRepository;
@@ -22,7 +24,7 @@ public class AuthService {
     @Transactional
     public LoginResponse signup(SignupRequest request) {
         if (userRepository.existsByUserName(request.userName())) {
-            throw new IllegalArgumentException("이미 존재하는 사용자명입니다.");
+            throw new BusinessException(ErrorCode.DUPLICATE_USERNAME);
         }
 
         User user = User.builder()
@@ -40,10 +42,10 @@ public class AuthService {
     @Transactional(readOnly = true)
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByUserName(request.userName())
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
         }
 
         String token = jwtUtil.generateToken(user.getUserId(), user.getUserName());
