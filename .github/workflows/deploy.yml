@@ -16,7 +16,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 2222
           script: |
-            cd ~/lineup
+            cd ~/line-up-be
             # 1. 최신 코드 가져오기
             git pull origin main
             
