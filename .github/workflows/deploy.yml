@@ -1,0 +1,59 @@
+name: Java CI/CD with SCP
+
+on:
+  push:
+    branches: [ "main" ] # main 브랜치에 푸시될 때 실행
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 1. Java 21 설정
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+
+      # 2. Gradle 빌드 (JAR 생성)
+      - name: Build with Gradle
+        run: |
+          chmod +x gradlew
+          ./gradlew clean bootJar -x test
+
+      # 3. JAR 파일을 서버로 전송 (SCP)
+      - name: Copy JAR to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 2222 # iptime 포트 번호
+          source: "build/libs/*.jar"
+          target: "~/lineup"
+          strip_components: 2 # build/libs 경로를 빼고 파일명만 보냄
+
+      # 4. 서버에서 Docker 실행 (SSH)
+      - name: Execute Docker Compose
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 2222
+          script: |
+            cd ~/lineup
+            # 파일 이름을 app.jar로 통일 (버전마다 이름이 달라지는 것 방지)
+            mv build/libs/*.jar app.jar || true 
+            
+            # 기존 컨테이너 끄고 새 이미지 빌드 및 실행
+            docker-compose down
+            docker-compose up -d --build
+            
+            # 안 쓰는 도커 이미지 정리 (용량 관리)
+            docker image prune -f
