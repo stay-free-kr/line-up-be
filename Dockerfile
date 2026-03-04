@@ -1,15 +1,15 @@
-# 1단계: Build 단계
-FROM gradle:8.14-jdk21-alpine AS build
+# 1단계: 빌드 (JDK 21 사용)
+FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /app
+# 프로젝트 전체 복사
 COPY . .
-RUN gradle bootJar --no-daemon
+# Gradle 빌드 실행 (gradle-wrapper.jar가 이제 서버에 있으므로 작동함)
+RUN chmod +x ./gradlew
+RUN ./gradlew clean bootJar -x test
 
-# 2단계: Run 단계
+# 2단계: 실행
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-
-# 빌드된 jar 파일을 복사
+# 1단계에서 만든 jar만 가져옴
 COPY --from=build /app/build/libs/*.jar app.jar
-
-# 애플리케이션 실행
 ENTRYPOINT ["java", "-jar", "app.jar"]
