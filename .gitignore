@@ -1,6 +1,7 @@
 ### Java ###
 *.class
 *.jar
+!gradle/wrapper/gradle-wrapper.jar
 *.war
 *.ear
 
@@ -16,7 +17,7 @@ build/
 out/
 
 ### Database ###
-mysql_data/  # 아까 생성한 도커 볼륨 데이터 폴더입니다.
+mysql_data/
 
 ### OS ###
 .DS_Store
