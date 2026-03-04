@@ -7,8 +7,6 @@ services:
     environment:
       MYSQL_DATABASE: lineup_db
       MYSQL_ROOT_PASSWORD: et1234!!
-      MYSQL_USER: root
-      MYSQL_PASSWORD: et1234!!
     ports:
       - "3307:3306"
     volumes:
@@ -24,7 +22,7 @@ services:
       - db
     environment:
       # DB 연결 정보 (서비스 이름인 'db'로 접근)
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3307/lineup_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/lineup_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: et1234!!
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
