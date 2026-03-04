@@ -1,12 +1,14 @@
 ### Java ###
 *.class
-*.jar
 *.war
 *.ear
 
 ### Gradle ###
 .gradle/
-build/
+build/*
+!build/libs/
+build/libs/*
+!build/libs/*.jar
 
 ### IntelliJ IDEA ###
 .idea/
