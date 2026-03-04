@@ -1,5 +1,5 @@
 # 1단계: 빌드 (확실하게 Gradle 8.12 이상 버전 사용)
-FROM gradle:8.12.1-jdk21-alpine AS build
+FROM gradle:8.14.4-jdk21-alpine AS build
 WORKDIR /app
 COPY . .
 
