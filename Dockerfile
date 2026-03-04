@@ -1,9 +1,9 @@
-# 1단계: 빌드 (최신 Gradle 이미지를 사용하여 8.14+ 요구사항 충족)
-FROM gradle:jdk21-alpine AS build
+# 1단계: 빌드 (확실하게 Gradle 8.12 이상 버전 사용)
+FROM gradle:8.12.1-jdk21-alpine AS build
 WORKDIR /app
 COPY . .
 
-# 최신 Gradle 이미지는 내부에 Gradle 8.14 이상이 들어있습니다.
+# 빌드 실행
 RUN gradle clean bootJar -x test
 
 # 2단계: 실행
