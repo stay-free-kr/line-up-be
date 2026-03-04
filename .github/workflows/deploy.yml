@@ -49,7 +49,9 @@ jobs:
           script: |
             cd ~/lineup
             # 파일 이름을 app.jar로 통일 (버전마다 이름이 달라지는 것 방지)
-            mv build/libs/*.jar app.jar || true 
+            if [ -f *.jar ]; then
+                mv line-up-be-0.0.1-SNAPSHOT.jar app.jar || mv *.jar app.jar
+            fi
             
             # 기존 컨테이너 끄고 새 이미지 빌드 및 실행
             docker-compose down
